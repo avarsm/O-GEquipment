@@ -96,9 +96,6 @@ og-equipment-tool/
   and re-solves for power at a best-in-class efficiency, to estimate
   savings and a simple payback period for upgrading.
 
-All of the above is shown, with real numbers substituted in, on the "View
-Engineering Calculations" panel for each equipment type, nothing is a
-black box.
 
 ## Known simplifications
 - Equipment curves are parametric models tuned to look like realistic
