@@ -1,9 +1,3 @@
-/* ===================================================================
-   state.js: single source of truth for the current project.
-   Conditions/requirements/baseline are keyed by equipment type so
-   switching equipment types never clobbers another type's inputs.
-=================================================================== */
-
 const STORAGE_KEY = "og_screening_tool_state_v2";
 
 const defaultState = {
