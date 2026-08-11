@@ -1,8 +1,3 @@
-/* ===================================================================
-   fanData.js: candidate fan/blower library. Same curve-model pattern
-   as pumpData.js, using pressure rise (Pa) in place of head (m).
-=================================================================== */
-
 const FAN_CANDIDATES = [
   {
     id: "A",
