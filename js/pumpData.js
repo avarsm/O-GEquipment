@@ -1,12 +1,3 @@
-/* ===================================================================
-   pumpData.js: a small library of representative centrifugal pump
-   candidates. Each candidate is defined by a best-efficiency point
-   (BEP) and typical curve shape parameters; head and efficiency at
-   any flow are derived from simplified but physically-reasonable
-   curve models, not looked up from a table. This keeps the "engine"
-   honest: change the duty point and the curves respond correctly.
-=================================================================== */
-
 const PUMP_CANDIDATES = [
   {
     id: "A",
