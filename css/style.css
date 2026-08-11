@@ -1,13 +1,3 @@
-/* ===================================================================
-   O&G Equipment Screening Tool: stylesheet
-   Design direction: a preliminary-design engineering tool should read
-   like a clean data sheet, not a marketing page. Quantities are set in
-   monospace throughout (the one consistent "signature" of the design)
-   so every number on the site reads like it came off an instrument.
-   Accent colour (blueprint cyan) is a direct nod to cyanotype
-   engineering drawings.
-=================================================================== */
-
 :root {
   --ink: #14213d;
   --ink-mid: #445069;
