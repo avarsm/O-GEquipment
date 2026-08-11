@@ -1,10 +1,3 @@
-/* ===================================================================
-   compressorData.js: candidate compressor library. Mirrors the
-   pumpData.js pattern: a best-efficiency point (BEP) plus curve-shape
-   parameters, so efficiency and capability respond correctly to
-   whatever duty point the user enters instead of being hard-coded.
-=================================================================== */
-
 const GASES = {
   natural_gas: { label: "Natural Gas", k: 1.28, molarMass: 18.8 },
   air: { label: "Air", k: 1.40, molarMass: 28.97 },
