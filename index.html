@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O&amp;G Equipment Screening Tool</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">OG</span>
+      <div class="brand-text">
+        <span class="brand-title">Equipment Screening Tool</span>
+        <span class="brand-sub">Preliminary equipment selection, energy analysis &amp; lifecycle cost evaluation</span>
+      </div>
+    </div>
+    <nav class="mainnav">
+      <button class="navlink active" data-view="dashboard">Dashboard</button>
+      <button class="navlink" data-view="project-setup">Project</button>
+      <button class="navlink" data-view="screening">Screening</button>
+      <button class="navlink" data-view="results">Results</button>
+      <button class="navlink" data-view="report">Report</button>
+      <button class="navlink" data-view="optimize">Optimize</button>
+    </nav>
+  </div>
+
+  <div class="stepbar hidden" id="stepbar">
+    <button class="step" data-view="project-setup"><span class="step-num">1</span><span class="step-label">Project</span></button>
+    <span class="step-line"></span>
+    <button class="step" data-view="screening"><span class="step-num">2</span><span class="step-label">Screening</span></button>
+    <span class="step-line"></span>
+    <button class="step" data-view="results"><span class="step-num">3</span><span class="step-label">Results</span></button>
+    <span class="step-line"></span>
+    <button class="step" data-view="report"><span class="step-num">4</span><span class="step-label">Report</span></button>
+  </div>
+</header>
+
+<main id="app">
+
+  <!-- ============ DASHBOARD ============ -->
+  <section class="view active" id="view-dashboard">
+    <div class="container">
+      <h1>O&amp;G Equipment Screening Tool</h1>
+      <p class="lead">Preliminary equipment selection, energy analysis, and lifecycle cost evaluation for oil &amp; gas applications.</p>
+
+      <div class="card-grid">
+        <button class="tool-card active-card" data-equip-entry="pump">
+          <span class="tool-name">Pumping Systems</span>
+          <span class="tool-desc">Screen centrifugal pumps and evaluate pipeline hydraulics for a given duty point.</span>
+        </button>
+        <button class="tool-card active-card" data-equip-entry="compressor">
+          <span class="tool-name">Compression Systems</span>
+          <span class="tool-desc">Screen compressors for gas gathering, boost, and transmission applications.</span>
+        </button>
+        <button class="tool-card active-card" data-equip-entry="heatExchanger">
+          <span class="tool-name">Heat Transfer</span>
+          <span class="tool-desc">Size and compare heat exchanger options for process and cooling duties.</span>
+        </button>
+        <button class="tool-card active-card" data-goto="optimize">
+          <span class="tool-name">Energy Optimization</span>
+          <span class="tool-desc">Analyze equipment you already have and estimate the savings available from upgrading it.</span>
+        </button>
+      </div>
+
+      <div class="dashboard-footer">
+        <p>Every number on this site traces back to an equation on the Results page. Pick a tool above to get started.</p>
+        <button class="btn btn-primary" data-goto="project-setup">Start a new project &rarr;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROJECT SETUP ============ -->
+  <section class="view" id="view-project-setup">
+    <div class="container narrow">
+      <h2>Project Setup</h2>
+      <p class="lead">Define the project and the shared process conditions. Evaluating <strong id="equip-type-label">a pump</strong> right now, you can change this on the Screening page.</p>
+
+      <div class="panel">
+        <h3><span class="panel-eyebrow">1</span>Project Information</h3>
+        <div class="grid-2">
+          <label>Project name
+            <input type="text" id="in-project-name" placeholder="e.g. Eagle Ford Produced Water System">
+          </label>
+          <label>Location
+            <input type="text" id="in-location" placeholder="e.g. South Texas">
+          </label>
+          <label>Operating period (years)
+            <input type="number" id="in-op-period" value="20" min="1" max="50">
+          </label>
+          <label>Currency
+            <select id="in-currency">
+              <option value="USD" selected>USD ($)</option>
+              <option value="CAD">CAD ($)</option>
+              <option value="EUR">EUR (&euro;)</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3><span class="panel-eyebrow">2</span>Application</h3>
+        <p class="hint">Pick a starting scenario to auto-fill typical conditions for the current equipment type, or choose Custom and enter your own.</p>
+        <div class="app-grid" id="application-grid"><!-- populated by JS --></div>
+      </div>
+
+      <div class="panel">
+        <h3><span class="panel-eyebrow">3</span>Process Conditions</h3>
+        <div class="grid-2">
+          <label>Flow rate (m&sup3;/hr)
+            <input type="number" id="in-flow" value="1000" min="1">
+          </label>
+          <label>Temperature (&deg;C)
+            <input type="number" id="in-temp" value="60">
+          </label>
+          <label>Operating hours (hr/year)
+            <input type="number" id="in-hours" value="8000" min="1" max="8760">
+          </label>
+          <label>Electricity price ($/kWh)
+            <input type="number" id="in-price" value="0.08" min="0.001" step="0.001">
+          </label>
+        </div>
+        <p class="hint" style="margin-top:10px;">Equipment-specific details (head, pressure ratio, fluid properties, etc.) are entered on the Screening page for the equipment type you're evaluating.</p>
+      </div>
+
+      <div class="panel">
+        <h3><span class="panel-eyebrow">4</span>Existing / baseline system <span class="hint-inline">(for savings comparison)</span></h3>
+        <div class="grid-2">
+          <label id="baseline-eff-label">Baseline equipment efficiency (%)
+            <input type="number" id="in-baseline-eff" value="65" min="1" max="100">
+          </label>
+          <label>Grid emissions factor (t CO&#8322;/MWh)
+            <input type="number" id="in-emissions" value="0.40" min="0" step="0.01">
+          </label>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn btn-primary" id="btn-continue-to-screening">Continue to Screening &rarr;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EQUIPMENT SCREENING ============ -->
+  <section class="view" id="view-screening">
+    <div class="container narrow">
+      <h2>Equipment Screening</h2>
+      <p class="lead">Choose the equipment type, then enter the required operating point and equipment requirements.</p>
+      <p class="disclaimer-note">The candidate models screened below are industry-representative estimates for comparison, not real manufacturer products or pricing.</p>
+
+      <div class="equip-grid">
+        <button class="equip-card" data-equip="pump">Pump</button>
+        <button class="equip-card" data-equip="compressor">Compressor</button>
+        <button class="equip-card" data-equip="heatExchanger">Heat Exchanger</button>
+        <button class="equip-card" data-equip="fan">Fan / Blower</button>
+      </div>
+
+      <div class="panel" id="screening-summary">
+        <h3>Process conditions summary</h3>
+        <p class="hint">Pulled from your Project Setup inputs. Go back to Project to change these.</p>
+        <div class="summary-grid" id="duty-summary"><!-- populated by JS --></div>
+      </div>
+
+      <!-- ---- Pump detail form ---- -->
+      <div class="panel equip-detail" id="detail-pump">
+        <h3>Required Operating Point</h3>
+        <div class="grid-2">
+          <label>Flow (m&sup3;/hr)<input type="number" id="pump-flow" min="1"></label>
+          <label>Head (m)<input type="number" id="pump-head" min="1"></label>
+          <label>Fluid density (kg/m&sup3;)<input type="number" id="pump-density" min="1"></label>
+          <label>Viscosity (cP)<input type="number" id="pump-viscosity" min="0.1" step="0.1"></label>
+        </div>
+        <h3 style="margin-top:18px;">Equipment Requirements</h3>
+        <div class="grid-2">
+          <label>Minimum efficiency (%)<input type="number" id="pump-min-eff" min="1" max="100"></label>
+          <label>Maximum power (kW)<input type="number" id="pump-max-power" min="1"></label>
+          <label>Desired operating life (years)<input type="number" id="pump-life" min="1"></label>
+          <label>Required factor of safety<input type="number" id="pump-fos" min="1" step="0.1"></label>
+        </div>
+      </div>
+
+      <!-- ---- Compressor detail form ---- -->
+      <div class="panel equip-detail" id="detail-compressor">
+        <h3>Required Operating Point</h3>
+        <div class="grid-2">
+          <label>Gas
+            <select id="compressor-gas">
+              <option value="natural_gas">Natural Gas</option>
+              <option value="air">Air</option>
+              <option value="associated_gas">Associated / Wellhead Gas</option>
+              <option value="custom">Custom</option>
+            </select>
+          </label>
+          <label>Inlet flow, actual (m&sup3;/hr)<input type="number" id="compressor-flow" min="1"></label>
+          <label>Inlet pressure P1 (bar abs)<input type="number" id="compressor-p1" min="0.1" step="0.1"></label>
+          <label>Discharge pressure P2 (bar abs)<input type="number" id="compressor-p2" min="0.1" step="0.1"></label>
+          <label>Inlet temperature (&deg;C)<input type="number" id="compressor-t1"></label>
+          <label id="compressor-k-label">Specific heat ratio (k)<input type="number" id="compressor-k" step="0.01"></label>
+          <label id="compressor-m-label">Molar mass (kg/kmol)<input type="number" id="compressor-molarmass" step="0.1"></label>
+        </div>
+        <h3 style="margin-top:18px;">Equipment Requirements</h3>
+        <div class="grid-2">
+          <label>Minimum isentropic efficiency (%)<input type="number" id="compressor-min-eff" min="1" max="100"></label>
+          <label>Maximum power (kW)<input type="number" id="compressor-max-power" min="1"></label>
+          <label>Desired operating life (years)<input type="number" id="compressor-life" min="1"></label>
+          <label>Required factor of safety<input type="number" id="compressor-fos" min="1" step="0.1"></label>
+        </div>
+      </div>
+
+      <!-- ---- Fan detail form ---- -->
+      <div class="panel equip-detail" id="detail-fan">
+        <h3>Required Operating Point</h3>
+        <div class="grid-2">
+          <label>Flow (m&sup3;/hr)<input type="number" id="fan-flow" min="1"></label>
+          <label>Required pressure rise (Pa)<input type="number" id="fan-pressure" min="1"></label>
+          <label>Air density (kg/m&sup3;)<input type="number" id="fan-density" min="0.1" step="0.01"></label>
+        </div>
+        <h3 style="margin-top:18px;">Equipment Requirements</h3>
+        <div class="grid-2">
+          <label>Minimum efficiency (%)<input type="number" id="fan-min-eff" min="1" max="100"></label>
+          <label>Maximum power (kW)<input type="number" id="fan-max-power" min="1"></label>
+          <label>Desired operating life (years)<input type="number" id="fan-life" min="1"></label>
+          <label>Required factor of safety<input type="number" id="fan-fos" min="1" step="0.1"></label>
+        </div>
+      </div>
+
+      <!-- ---- Heat exchanger detail form ---- -->
+      <div class="panel equip-detail" id="detail-heatExchanger">
+        <h3>Process Duty</h3>
+        <div class="grid-2">
+          <label>Hot fluid flow (m&sup3;/hr)<input type="number" id="hx-hotflow" min="1"></label>
+          <label>Hot fluid density (kg/m&sup3;)<input type="number" id="hx-hotdensity" min="1"></label>
+          <label>Hot fluid specific heat (kJ/kg&middot;K)<input type="number" id="hx-hotcp" min="0.1" step="0.1"></label>
+          <label>Hot inlet temperature (&deg;C)<input type="number" id="hx-hotin"></label>
+          <label>Hot outlet temperature target (&deg;C)<input type="number" id="hx-hotout"></label>
+          <label>Cold inlet temperature (&deg;C)<input type="number" id="hx-coldin"></label>
+          <label>Cold outlet temperature target (&deg;C)<input type="number" id="hx-coldout"></label>
+        </div>
+        <h3 style="margin-top:18px;">Design Requirements</h3>
+        <div class="grid-2">
+          <label>Maximum footprint area (m&sup2;)<input type="number" id="hx-max-area" min="1"></label>
+          <label>Maximum pressure drop (bar)<input type="number" id="hx-max-dp" min="0.01" step="0.01"></label>
+          <label>Minimum approach temperature (&deg;C)<input type="number" id="hx-min-approach" min="1"></label>
+          <label>Desired operating life (years)<input type="number" id="hx-life" min="1"></label>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn btn-secondary" data-goto="project-setup">&larr; Back</button>
+        <button class="btn btn-primary" id="btn-run-screening">Run Screening</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="view" id="view-results">
+    <div class="container">
+      <h2>Screening Results</h2>
+      <p class="disclaimer-note">Candidate models are industry-representative estimates for comparison, not real manufacturer products or pricing.</p>
+
+      <div id="results-empty" class="empty-state">
+        <p>No results yet. Complete Project Setup and run screening first.</p>
+        <button class="btn btn-primary" data-goto="project-setup">Set up a project &rarr;</button>
+      </div>
+
+      <div id="results-content" class="hidden">
+
+        <nav class="quicknav" id="results-quicknav">
+          <a href="#sec-overview">Overview</a>
+          <a href="#sec-comparison">Comparison</a>
+          <a href="#sec-energy">Energy</a>
+          <a href="#sec-lifecycle">Lifecycle</a>
+          <a href="#sec-environmental">Environmental</a>
+          <a href="#sec-sensitivity">Sensitivity</a>
+          <a href="#sec-engineering">Engineering</a>
+        </nav>
+
+        <div class="recommend-banner" id="sec-overview">
+          <div>
+            <div class="recommend-badge">Recommended Equipment</div>
+            <h3 id="rec-name">&ndash;</h3>
+          </div>
+          <div class="recommend-score">
+            <span id="rec-score">&ndash;</span><span class="score-max">/100</span>
+            <span class="score-label">Technical Score</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Recommended Equipment Detail</h3>
+          <table class="result-table" id="rec-table"></table>
+        </div>
+
+        <div class="panel" id="sec-comparison">
+          <h3>Candidate Comparison</h3>
+          <div class="table-scroll">
+            <table class="compare-table" id="compare-table"></table>
+          </div>
+          <p class="hint">Click a candidate column to view its full detail below.</p>
+          <div id="candidate-detail"></div>
+        </div>
+
+        <div class="panel" id="sec-energy">
+          <h3>Energy Analysis</h3>
+          <div class="two-col">
+            <div class="stat-block">
+              <span class="stat-label" id="energy-current-label">Current (baseline)</span>
+              <span class="stat-value" id="energy-current">&ndash;</span>
+            </div>
+            <div class="stat-block highlight">
+              <span class="stat-label">Recommended</span>
+              <span class="stat-value" id="energy-recommended">&ndash;</span>
+            </div>
+          </div>
+          <div class="savings-row">
+            <div class="savings-chip"><span id="energy-savings">&ndash;</span><small>Annual energy savings</small></div>
+            <div class="savings-chip"><span id="energy-reduction-pct">&ndash;</span><small>Energy reduction</small></div>
+          </div>
+          <div class="two-col">
+            <div class="stat-block">
+              <span class="stat-label">Current operating cost</span>
+              <span class="stat-value" id="cost-current">&ndash;</span>
+            </div>
+            <div class="stat-block highlight">
+              <span class="stat-label">Recommended operating cost</span>
+              <span class="stat-value" id="cost-recommended">&ndash;</span>
+            </div>
+          </div>
+          <div class="savings-row">
+            <div class="savings-chip"><span id="cost-savings">&ndash;</span><small>Annual cost savings</small></div>
+          </div>
+        </div>
+
+        <div class="panel" id="sec-lifecycle">
+          <h3>Lifecycle Cost</h3>
+          <p class="hint">Capital cost plus cumulative energy cost over the operating period.</p>
+          <canvas id="lifecycle-chart" height="110"></canvas>
+          <div class="lifecycle-numbers" id="lifecycle-numbers"></div>
+        </div>
+
+        <div class="panel" id="sec-environmental">
+          <h3>Environmental Impact</h3>
+          <div class="grid-3">
+            <div class="stat-block">
+              <span class="stat-label">Annual energy savings</span>
+              <span class="stat-value" id="env-energy">&ndash;</span>
+            </div>
+            <div class="stat-block">
+              <span class="stat-label">Est. CO&#8322; reduction / year</span>
+              <span class="stat-value" id="env-co2-year">&ndash;</span>
+            </div>
+            <div class="stat-block">
+              <span class="stat-label">CO&#8322; reduction over operating period</span>
+              <span class="stat-value" id="env-co2-life">&ndash;</span>
+            </div>
+          </div>
+          <label class="inline-label">Emissions factor (t CO&#8322;/MWh)
+            <input type="number" id="in-emissions-live" step="0.01">
+          </label>
+        </div>
+
+        <div class="panel" id="sec-sensitivity">
+          <h3>Sensitivity Analysis</h3>
+          <p class="hint">Adjust price or flow to see the recommendation update in real time.</p>
+          <div class="slider-row">
+            <label>Electricity price: <span id="sens-price-val">$0.08</span>/kWh</label>
+            <input type="range" id="sens-price" min="0.03" max="0.30" step="0.005" value="0.08">
+          </div>
+          <div class="slider-row">
+            <label id="sens-flow-label">Flow rate: <span id="sens-flow-val">1000</span> m&sup3;/hr</label>
+            <input type="range" id="sens-flow" min="1" max="2000" step="1" value="1000">
+          </div>
+          <div class="sens-results grid-3">
+            <div class="stat-block"><span class="stat-label">Power requirement</span><span class="stat-value" id="sens-power">&ndash;</span></div>
+            <div class="stat-block"><span class="stat-label">Annual energy</span><span class="stat-value" id="sens-energy">&ndash;</span></div>
+            <div class="stat-block"><span class="stat-label">Annual cost</span><span class="stat-value" id="sens-cost">&ndash;</span></div>
+          </div>
+          <button class="btn btn-secondary" id="btn-reset-sens">Reset to base case</button>
+        </div>
+
+        <div class="panel" id="sec-engineering">
+          <button class="btn btn-outline" id="btn-toggle-engineering">View Calculations</button>
+          <div id="engineering-detail" class="hidden"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REPORT ============ -->
+  <section class="view" id="view-report">
+    <div class="container narrow">
+      <h2>Engineering Report</h2>
+      <div id="report-empty" class="empty-state">
+        <p>Run a screening first to generate a report.</p>
+      </div>
+      <div id="report-content" class="hidden">
+        <div class="actions-row no-print">
+          <button class="btn btn-primary" id="btn-print-report">Print / Save as PDF</button>
+          <button class="btn btn-secondary" id="btn-download-report">Download as text</button>
+        </div>
+        <div class="report-sheet" id="report-sheet"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ENERGY OPTIMIZATION ============ -->
+  <section class="view" id="view-optimize">
+    <div class="container narrow">
+      <h2>Energy Optimization</h2>
+      <p class="lead">Analyze a piece of equipment already in service and estimate the savings available from upgrading it to a best-in-class unit.</p>
+
+      <div class="panel">
+        <h3>Existing Equipment</h3>
+        <div class="grid-2">
+          <label>Equipment type
+            <select id="opt-equip-type">
+              <option value="pump">Pump</option>
+              <option value="compressor">Compressor</option>
+              <option value="fan">Fan / Blower</option>
+            </select>
+          </label>
+          <label>Current rated / measured power (kW)
+            <input type="number" id="opt-power" min="1" value="250">
+          </label>
+          <label>Current efficiency estimate (%)
+            <input type="number" id="opt-eff" min="1" max="100" value="65">
+          </label>
+          <label>Operating hours (hr/year)
+            <input type="number" id="opt-hours" min="1" max="8760" value="8000">
+          </label>
+          <label>Electricity price ($/kWh)
+            <input type="number" id="opt-price" min="0.001" step="0.001" value="0.08">
+          </label>
+          <label>Grid emissions factor (t CO&#8322;/MWh)
+            <input type="number" id="opt-emissions" min="0" step="0.01" value="0.40">
+          </label>
+        </div>
+        <div class="actions-row">
+          <button class="btn btn-primary" id="btn-run-optimization">Analyze</button>
+        </div>
+      </div>
+
+      <div id="opt-results" class="hidden">
+        <div class="recommend-banner">
+          <div>
+            <div class="recommend-badge" id="opt-verdict-badge">Optimization Opportunity</div>
+            <h3 id="opt-verdict">&ndash;</h3>
+          </div>
+          <div class="recommend-score">
+            <span id="opt-reduction-pct">&ndash;</span>
+            <span class="score-label">Potential Energy Reduction</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Current vs. Best-in-Class</h3>
+          <div class="two-col">
+            <div class="stat-block">
+              <span class="stat-label">Current efficiency</span>
+              <span class="stat-value" id="opt-current-eff">&ndash;</span>
+            </div>
+            <div class="stat-block highlight">
+              <span class="stat-label">Best-in-class efficiency</span>
+              <span class="stat-value" id="opt-best-eff">&ndash;</span>
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="stat-block">
+              <span class="stat-label">Current annual energy / cost</span>
+              <span class="stat-value" id="opt-current-energy">&ndash;</span>
+            </div>
+            <div class="stat-block highlight">
+              <span class="stat-label">Optimized annual energy / cost</span>
+              <span class="stat-value" id="opt-optimized-energy">&ndash;</span>
+            </div>
+          </div>
+          <div class="savings-row">
+            <div class="savings-chip"><span id="opt-cost-savings">&ndash;</span><small>Annual cost savings</small></div>
+            <div class="savings-chip"><span id="opt-co2-savings">&ndash;</span><small>CO&#8322; savings / year</small></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Investment Case</h3>
+          <table class="result-table" id="opt-investment-table"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="sitefooter no-print">
+  <p>O&amp;G Equipment Screening Tool &middot; Preliminary design aid covering pumps, compressors, fans/blowers, and heat exchangers. Results are estimates only and do not replace a full engineering study or vendor-certified performance data.</p>
+</footer>
+
+<script src="js/state.js"></script>
+<script src="js/engineering.js"></script>
+<script src="js/pumpData.js"></script>
+<script src="js/compressorData.js"></script>
+<script src="js/fanData.js"></script>
+<script src="js/heatExchangerData.js"></script>
+<script src="js/applications.js"></script>
+<script src="js/screening.js"></script>
+<script src="js/energyOptimization.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/report.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
