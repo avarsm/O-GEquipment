@@ -5,8 +5,6 @@ oil & gas applications. Screens **pumps, compressors, fans/blowers, and heat
 exchangers**, and includes a standalone **Energy Optimization** tool for
 analyzing equipment already in service.
 
-No build step, no framework, no external services. It's plain HTML/CSS/JS so
-it's easy to read, easy to extend, and easy to explain in an interview.
 
 ## Running it in VS Code
 
