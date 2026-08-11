@@ -100,8 +100,7 @@ All of the above is shown, with real numbers substituted in, on the "View
 Engineering Calculations" panel for each equipment type, nothing is a
 black box.
 
-## Known simplifications (worth mentioning if you present this)
-
+## Known simplifications
 - Equipment curves are parametric models tuned to look like realistic
   behavior, not digitized manufacturer data. This is a preliminary
   screening tool, not a final-selection tool.
