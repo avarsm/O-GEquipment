@@ -1,6 +1,5 @@
 /* ===================================================================
-   app.js: wires the DOM to state.js / screening.js / report.js /
-   energyOptimization.js. Organized top-to-bottom in the order the
+   Organized top-to-bottom in the order the
    user moves through the tool.
 =================================================================== */
 
