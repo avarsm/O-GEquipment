@@ -1,10 +1,3 @@
-/* ===================================================================
-   applications.js: one-click starting scenarios covering upstream,
-   midstream, and downstream O&G operations. Selecting one sets the
-   equipment type and pre-fills reasonable process conditions; the
-   user can still edit every field afterward.
-=================================================================== */
-
 const APPLICATIONS = [
   // ---------------- Upstream ----------------
   {
