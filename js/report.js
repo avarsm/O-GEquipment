@@ -1,12 +1,3 @@
-/* ===================================================================
-   report.js: assembles the final one-page engineering summary from
-   the current state + results, both as HTML (for the on-screen sheet
-   / browser print-to-PDF) and as plain text (for the download
-   button). Operating-conditions and recommended-equipment fields are
-   equipment-type specific; everything else (energy, environmental,
-   lifecycle) is shared.
-=================================================================== */
-
 function conditionsRows(results) {
   const c = results.conditions;
   switch (results.equipmentType) {
