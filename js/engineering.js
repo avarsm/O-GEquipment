@@ -1,9 +1,3 @@
-/* ===================================================================
-   engineering.js: the actual equations. Every number shown anywhere
-   in the UI should be traceable back to a function in this file.
-   Units are called out on every function so nothing is ambiguous.
-=================================================================== */
-
 const G = 9.81; // m/s^2
 
 /**
