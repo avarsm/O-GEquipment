@@ -1,11 +1,3 @@
-/* ===================================================================
-   charts.js: a small hand-rolled bar chart for the 20-year lifecycle
-   cost comparison. Deliberately not using an external charting
-   library: this keeps the project dependency-free so it opens and
-   runs the same way in VS Code / Live Server with no build step and
-   no network requirement.
-=================================================================== */
-
 function drawLifecycleChart(canvas, candidates, recommendedId) {
   const ctx = canvas.getContext("2d");
   const dpr = window.devicePixelRatio || 1;
